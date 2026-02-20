@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AHORRITOR - Tu Gestor Financiero</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="piggy-feeder">
+            <div class="coin-food c1"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="coin-food c2"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="coin-food c3"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="the-piggy"><i class="fa-solid fa-piggy-bank"></i></div>
+        </div>
+        <h2 class="loading-text">Alimentando a AHORRITOR...</h2>
+    </div>
+
+    <div id="login-screen" class="glass-container hidden-screen">
+        <div class="header-logo">
+            <i class="fa-solid fa-piggy-bank piggy-logo"></i>
+            <h2>Bienvenido a AHORRITOR</h2>
+        </div>
+        <div class="input-group">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="email" placeholder="Correo electrónico" required>
+        </div>
+        <div class="input-group">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="Contraseña (Mín. 6)" required>
+        </div>
+        <button id="btn-login" class="btn-primary">Iniciar Sesión</button>
+        <button id="btn-register" class="btn-secondary">Crear Cuenta Nueva</button>
+        <p id="login-error" class="error-msg"></p>
+    </div>
+
+    <div id="dashboard-screen" class="glass-container hidden-screen" style="max-width: 1200px;">
+        <header>
+            <div class="header-title">
+                <i class="fa-solid fa-sack-dollar" style="font-size: 30px;"></i>
+                <div>
+                    <h2>Mi Dashboard Ahorritor</h2>
+                    <p id="current-date-display" class="date-text"></p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="month-picker-container">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <input type="month" id="month-filter" class="month-selector" title="Filtrar por mes">
+                </div>
+                <button id="btn-logout" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+            </div>
+        </header>
+
+        <div class="kpi-container">
+            <div class="kpi-card balance-card slide-up delay-1">
+                <p>Disponible Total</p>
+                <h1 id="display-balance">S/ 0.00</h1>
+                <i class="fa-solid fa-wallet kpi-icon"></i>
+            </div>
+            <div class="kpi-card savings-card slide-up delay-2">
+                <p>Ahorros (Chanchito)</p>
+                <h1 id="display-savings">S/ 0.00</h1>
+                <i class="fa-solid fa-piggy-bank kpi-icon"></i>
+            </div>
+            <div class="kpi-card income-card slide-up delay-3">
+                <p>Ingresos del Mes</p>
+                <h1 id="display-income">S/ 0.00</h1>
+                <i class="fa-solid fa-arrow-trend-up kpi-icon"></i>
+            </div>
+            <div class="kpi-card expense-card slide-up delay-4">
+                <p>Gastos del Mes</p>
+                <h1 id="display-expenses">S/ 0.00</h1>
+                <i class="fa-solid fa-money-bill-transfer kpi-icon"></i>
+            </div>
+            <div class="kpi-card budget-card slide-up delay-5">
+                <p>Gasto Libre Seguro</p>
+                <h1 id="display-budget">S/ 0.00</h1>
+                <p style="font-size: 11px; color: var(--gold-accent); margin-top: 5px; opacity: 0.8;">
+                    <i class="fa-solid fa-lock"></i> Protegiendo 20% de ahorro
+                </p>
+                <i class="fa-solid fa-shield-halved kpi-icon"></i>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <div class="forms-column">
+                <div class="quick-out-section slide-up delay-4">
+                    <h3><i class="fa-solid fa-martini-glass-citrus"></i> Modo: ¡Estoy Saliendo!</h3>
+                    <p style="font-size: 12px; color: #a4b0be; margin-bottom: 15px;">Anota aquí los gastos rápidos de tu día/salida.</p>
+                    <div class="input-group">
+                        <i class="fa-solid fa-beer-mug-empty input-icon-fix" style="color: var(--text-light);"></i>
+                        <input type="number" id="out-amount" placeholder="¿Cuánto gastaste hoy? (Ej. 120)">
+                    </div>
+                    <button id="btn-out" class="btn-danger" style="width: 100%;"><i class="fa-solid fa-bolt"></i> Guardar Salida Rápida</button>
+                </div>
+
+                <div class="form-section slide-up delay-4">
+                    <h3><i class="fa-solid fa-circle-plus"></i> Registro Detallado</h3>
+                    <div class="input-group">
+                        <select id="type">
+                            <option value="expense">Registrar Gasto 💸</option>
+                            <option value="income">Registrar Ingreso 💰</option>
+                            <option value="saving">Enviar a Ahorro 🐷</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-money-bill input-icon-fix"></i>
+                        <input type="number" id="amount" placeholder="Monto (Ej. 50.00)">
+                    </div>
+                    <div class="input-group">
+                        <select id="category"></select>
+                    </div>
+                    <button id="btn-add" class="btn-primary">Guardar Movimiento</button>
+                </div>
+            </div>
+
+            <div class="chart-section slide-up delay-5">
+                <h3>Distribución de Gastos</h3>
+                <div class="canvas-container">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="projection-section slide-up delay-5">
+            <h3><i class="fa-solid fa-crystal-ball"></i> Proyección de Ahorro Futuro</h3>
+            <p style="font-size: 13px; color: #a4b0be; margin-bottom: 15px;">Puedes sumar varios montos usando el símbolo "+". (Ej: 1500 + 200)</p>
+            
+            <div class="projection-controls">
+                <div class="input-group">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <input type="text" id="fixed-income" placeholder="Ingresos Fijos (Ej. 2800 + 500)">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <input type="text" id="fixed-expenses" placeholder="Gastos Fijos (Ej. 1314 + 150)">
+                </div>
+                <button id="btn-calculate" class="btn-secondary">🔮 Simular Futuro</button>
+            </div>
+
+            <div id="projection-results" class="projection-table-container" style="display: none;">
+                <table class="projection-table">
+                    <thead>
+                        <tr>
+                            <th>Tiempo</th>
+                            <th>Ahorro Acumulado (Aprox.)</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projection-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="history-section slide-up delay-5" style="margin-top: 25px;">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial Detallado del Mes</h3>
+            <div class="history-list" id="transaction-list"></div>
+        </div>
+
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
