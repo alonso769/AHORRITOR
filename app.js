@@ -42,14 +42,17 @@ const tableContainer = document.getElementById('projection-results');
 
 const btnOut = document.getElementById('btn-out');
 const outAmountInput = document.getElementById('out-amount');
+const outCategoryInput = document.getElementById('out-category'); // REFERENCIA AL NUEVO SELECT
 
 const categoryOptions = {
     expense: [
         { value: "Comida", text: "🍔 Comida" },
         { value: "Salidas_Ocio", text: "🍻 Salidas / Ocio" }, 
+        { value: "Transporte", text: "🚌 Transporte" },
+        { value: "Pareja", text: "❤️ Pareja (Tami)" }, // AGREGADO
+        { value: "Familia", text: "👨‍👩‍👧 Familia (Alessita)" }, // AGREGADO
         { value: "Salud", text: "💊 Salud" },
         { value: "Educacion", text: "📚 Educación" },
-        { value: "Transporte", text: "🚌 Transporte" },
         { value: "Servicios", text: "💡 Servicios" },
         { value: "Otros", text: "🛒 Otros Gastos" }
     ],
@@ -93,18 +96,12 @@ function evaluarSumaMatematica(textoCaja) {
 btnSimulate.addEventListener('click', () => {
     const ingFijo = evaluarSumaMatematica(inputFixIncome.value);
     const gasFijo = evaluarSumaMatematica(inputFixExpense.value);
-
     if(ingFijo === 0 && gasFijo === 0) return alert("Por favor ingresa montos válidos para simular.");
-
     const capacidadAhorroMensual = ingFijo - gasFijo;
-
     if(capacidadAhorroMensual <= 0) return alert("¡Cuidado! Tus gastos superan tus ingresos.");
-
     tableBody.innerHTML = "";
     tableContainer.style.display = "block";
-
     const periodos = [{ mes: 1, label: "En 1 Mes" }, { mes: 3, label: "En 3 Meses" }, { mes: 6, label: "En 6 Meses" }, { mes: 12, label: "En 1 Año (12 Meses)" }];
-
     periodos.forEach(p => {
         const futuroAhorro = globalAhorroTotal + (capacidadAhorroMensual * p.mes);
         const row = document.createElement("tr");
@@ -121,7 +118,6 @@ function configurarFechas() {
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     if(dateDisplay) dateDisplay.innerText = "Hoy es: " + today.toLocaleDateString('es-ES', options);
-    
     const currentMonthFormated = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
     if(monthFilter) monthFilter.value = currentMonthFormated;
 }
@@ -167,8 +163,10 @@ document.getElementById('btn-register')?.addEventListener('click', async () => {
 
 document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth));
 
+// BOTÓN DE SALIDA RÁPIDA ACTUALIZADO
 btnOut?.addEventListener('click', async () => {
     const amount = parseFloat(outAmountInput.value);
+    const category = outCategoryInput.value; // NUEVO: Toma la categoría del select rojo
     if (!amount || amount <= 0) return alert("¡Ingresa cuánto gastaste en tu salida!");
 
     const originalText = btnOut.innerHTML;
@@ -180,12 +178,12 @@ btnOut?.addEventListener('click', async () => {
             uid: currentUser.uid, 
             type: 'expense', 
             amount: amount, 
-            category: "Salidas_Ocio",
+            category: category, // AHORA GUARDA LA CATEGORÍA QUE ELIJAS
             date: serverTimestamp()
         });
         
         outAmountInput.value = ''; 
-        btnOut.innerHTML = '<i class="fa-solid fa-check"></i> ¡Salida Registrada!';
+        btnOut.innerHTML = '<i class="fa-solid fa-check"></i> ¡Gasto Registrado!';
         btnOut.style.background = 'linear-gradient(135deg, #2ed573, #7bed9f)';
         
         setTimeout(() => { btnOut.innerHTML = originalText; btnOut.style.background = ''; btnOut.disabled = false; }, 2000);
@@ -201,35 +199,26 @@ btnAdd?.addEventListener('click', async () => {
     const amountInput = document.getElementById('amount');
     const category = document.getElementById('category').value;
     const amount = parseFloat(amountInput.value);
-
     if (!amount || amount <= 0) return alert("¡Monto inválido!");
-
     const originalText = btnAdd.innerHTML;
     btnAdd.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; 
     btnAdd.disabled = true;
-
     try {
         await addDoc(collection(db, "transactions"), {
             uid: currentUser.uid, type: type, amount: amount, category: category,
             date: serverTimestamp()
         });
-        
         amountInput.value = ''; 
         btnAdd.innerHTML = '<i class="fa-solid fa-check"></i> ¡Guardado!';
         btnAdd.style.background = 'linear-gradient(135deg, #2ed573, #7bed9f)';
-        
         setTimeout(() => { btnAdd.innerHTML = originalText; btnAdd.style.background = ''; btnAdd.disabled = false; }, 2000);
-    } catch (error) { 
-        alert("Error al guardar."); 
-        btnAdd.innerHTML = originalText; btnAdd.disabled = false; 
-    }
+    } catch (error) { alert("Error al guardar."); btnAdd.innerHTML = originalText; btnAdd.disabled = false; }
 });
 
 
 function descargarTodaLaData() {
     if(!currentUser || !db) return;
     const q = query(collection(db, "transactions"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
-    
     onSnapshot(q, (snapshot) => {
         allTransactions = [];
         snapshot.forEach((doc) => { allTransactions.push({ id: doc.id, ...doc.data() }); });
@@ -240,28 +229,25 @@ function descargarTodaLaData() {
 function procesarYRenderizarDashboard() {
     if(!monthFilter || !monthFilter.value) return;
     const [selYear, selMonth] = monthFilter.value.split('-'); 
-    
     let saldoTotal = 0; let ahorrosTotales = 0; 
     let ingresosMes = 0; let gastosMes = 0; let ahorrosDelMes = 0;
     
-    let chartDataMap = { "Comida": 0, "Salidas_Ocio": 0, "Salud": 0, "Educacion": 0, "Transporte": 0, "Servicios": 0, "Otros": 0 };
+    // OBJETO DE GRÁFICA ACTUALIZADO CON TUS CATEGORÍAS
+    let chartDataMap = { "Comida": 0, "Transporte": 0, "Pareja": 0, "Familia": 0, "Salidas_Ocio": 0, "Salud": 0, "Educacion": 0, "Servicios": 0, "Otros": 0 };
     
     const historyList = document.getElementById('transaction-list');
     if(historyList) historyList.innerHTML = ''; 
 
     allTransactions.forEach(data => {
         const amount = data.amount || 0;
-        
         if (data.type === 'income') saldoTotal += amount;
         if (data.type === 'expense') saldoTotal -= amount;
         if (data.type === 'saving') { 
             ahorrosTotales += amount; 
             if (data.category !== 'Ahorro_Inicial') saldoTotal -= amount; 
         }
-
         let isSelectedMonth = false;
         let txDateObj = new Date(); 
-        
         if (data.date) {
             txDateObj = data.date.toDate();
             const txMonth = String(txDateObj.getMonth() + 1).padStart(2, '0');
@@ -271,16 +257,13 @@ function procesarYRenderizarDashboard() {
             const now = new Date();
             isSelectedMonth = (String(now.getFullYear()) === selYear && String(now.getMonth() + 1).padStart(2, '0') === selMonth);
         }
-
         if (isSelectedMonth) {
             if (data.type === 'income') ingresosMes += amount;
             if (data.type === 'expense') {
                 gastosMes += amount;
                 if (chartDataMap[data.category] !== undefined) chartDataMap[data.category] += amount;
             }
-            if (data.type === 'saving' && data.category !== 'Ahorro_Inicial') {
-                ahorrosDelMes += amount; 
-            }
+            if (data.type === 'saving' && data.category !== 'Ahorro_Inicial') ahorrosDelMes += amount; 
 
             if(historyList) {
                 const li = document.createElement('div');
@@ -288,14 +271,11 @@ function procesarYRenderizarDashboard() {
                 let icon = 'fa-money-bill'; let prefix = '-';
                 if(data.type === 'income') { icon = 'fa-arrow-trend-up'; prefix = '+'; }
                 if(data.type === 'saving') { icon = 'fa-piggy-bank'; prefix = ''; }
-                
                 let categoryName = (data.category || "").replace("_", " ").replace("Ocio", "/ Ocio");
-                
                 const day = String(txDateObj.getDate()).padStart(2, '0');
                 const monthStr = String(txDateObj.getMonth() + 1).padStart(2, '0');
                 const year = txDateObj.getFullYear();
                 const hora = txDateObj.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
-
                 li.innerHTML = `
                     <div class="history-info">
                         <strong><i class="fa-solid ${icon}"></i> ${categoryName}</strong>
@@ -311,10 +291,7 @@ function procesarYRenderizarDashboard() {
     });
 
     globalAhorroTotal = ahorrosTotales;
-
-    if(historyList && historyList.innerHTML === '') {
-        historyList.innerHTML = '<p style="text-align:center; color:#a4b0be; padding: 20px;">No hay movimientos registrados en este mes.</p>';
-    }
+    if(historyList && historyList.innerHTML === '') historyList.innerHTML = '<p style="text-align:center; color:#a4b0be; padding: 20px;">No hay movimientos registrados.</p>';
 
     let metaAhorroIdeal = ingresosMes * 0.20; 
     let ahorroAConsiderar = Math.max(metaAhorroIdeal, ahorrosDelMes); 
@@ -325,7 +302,6 @@ function procesarYRenderizarDashboard() {
     animarContador('display-income', ingresosMes);
     animarContador('display-expenses', gastosMes);
     animarContador('display-budget', presupuestoSeguroMes); 
-
     actualizarGrafica(chartDataMap);
 }
 
@@ -342,41 +318,26 @@ function animarContador(elementId, targetValue) {
     }
 }
 
-// ==========================================
-// GRÁFICA INTELIGENTE PARA MÓVILES
-// ==========================================
 function actualizarGrafica(dataMap) {
     const ctx = document.getElementById('expensesChart')?.getContext('2d');
     if(!ctx) return;
     if (expensesChart) expensesChart.destroy();
-    
-    // Detectar si la pantalla es de un celular (menos de 768px)
     const isMobile = window.innerWidth < 768;
-
     Chart.defaults.color = '#ffffff'; 
     Chart.defaults.font.family = "'Poppins', sans-serif";
-    
     expensesChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(dataMap),
             datasets: [{
                 data: Object.values(dataMap),
-                backgroundColor: ['#feca57', '#ff6b81', '#ff4757', '#0fbcf9', '#ff9ff3', '#54a0ff', '#8395a7'],
+                backgroundColor: ['#feca57', '#ff9ff3', '#ff6b81', '#10ac84', '#ff4757', '#0fbcf9', '#54a0ff', '#8395a7', '#576574'],
                 borderColor: '#1e272e', borderWidth: 2, hoverOffset: 15
             }]
         },
         options: {
-            responsive: true, 
-            maintainAspectRatio: false, 
-            cutout: '70%',
-            plugins: { 
-                legend: { 
-                    // Si es celular la leyenda va abajo, si es PC va a la derecha
-                    position: isMobile ? 'bottom' : 'right', 
-                    labels: { padding: 10, boxWidth: 12, usePointStyle: true, font: {size: 11} } 
-                } 
-            }
+            responsive: true, maintainAspectRatio: false, cutout: '70%',
+            plugins: { legend: { position: isMobile ? 'bottom' : 'right', labels: { padding: 10, boxWidth: 12, usePointStyle: true, font: {size: 11} } } }
         }
     });
 }

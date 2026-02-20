@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AHORRITOR - Tu Gestor Financiero</title>
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -24,6 +26,7 @@
         <div class="header-logo">
             <i class="fa-solid fa-piggy-bank piggy-logo"></i>
             <h2>Bienvenido a AHORRITOR</h2>
+            <p style="font-size: 13px; color: #a4b0be; margin-top: 5px;">Control inteligente de tus finanzas</p>
         </div>
         <div class="input-group">
             <i class="fa-solid fa-envelope"></i>
@@ -92,12 +95,24 @@
             <div class="forms-column">
                 <div class="quick-out-section slide-up delay-4">
                     <h3><i class="fa-solid fa-martini-glass-citrus"></i> Modo: ¡Estoy Saliendo!</h3>
-                    <p style="font-size: 12px; color: #a4b0be; margin-bottom: 15px;">Anota aquí los gastos rápidos de tu día/salida.</p>
+                    <p style="font-size: 12px; color: #a4b0be; margin-bottom: 15px;">Anota aquí los gastos rápidos de tu día.</p>
+                    
                     <div class="input-group">
                         <i class="fa-solid fa-beer-mug-empty input-icon-fix" style="color: var(--text-light);"></i>
-                        <input type="number" id="out-amount" placeholder="¿Cuánto gastaste hoy? (Ej. 120)">
+                        <input type="number" id="out-amount" placeholder="Monto (Ej. 50)">
                     </div>
-                    <button id="btn-out" class="btn-danger" style="width: 100%;"><i class="fa-solid fa-bolt"></i> Guardar Salida Rápida</button>
+                    
+                    <div class="input-group">
+                        <select id="out-category" style="border-color: rgba(255, 71, 87, 0.4);">
+                            <option value="Transporte">🚕 Transporte</option>
+                            <option value="Comida">🍔 Comida</option>
+                            <option value="Pareja">❤️ Pareja (Tami)</option>
+                            <option value="Familia">👨‍👩‍👧 Familia (Alessita)</option>
+                            <option value="Salidas_Ocio">🍻 Otras Salidas / Ocio</option>
+                        </select>
+                    </div>
+
+                    <button id="btn-out" class="btn-danger" style="width: 100%;"><i class="fa-solid fa-bolt"></i> Guardar Gasto</button>
                 </div>
 
                 <div class="form-section slide-up delay-4">
@@ -111,10 +126,11 @@
                     </div>
                     <div class="input-group">
                         <i class="fa-solid fa-money-bill input-icon-fix"></i>
-                        <input type="number" id="amount" placeholder="Monto (Ej. 50.00)">
+                        <input type="number" id="amount" placeholder="Monto (Ej. 150.00)">
                     </div>
                     <div class="input-group">
-                        <select id="category"></select>
+                        <select id="category">
+                            </select>
                     </div>
                     <button id="btn-add" class="btn-primary">Guardar Movimiento</button>
                 </div>
@@ -130,39 +146,38 @@
 
         <div class="projection-section slide-up delay-5">
             <h3><i class="fa-solid fa-crystal-ball"></i> Proyección de Ahorro Futuro</h3>
-            <p style="font-size: 13px; color: #a4b0be; margin-bottom: 15px;">Puedes sumar varios montos usando el símbolo "+". (Ej: 1500 + 200)</p>
+            <p style="font-size: 13px; color: #a4b0be; margin-bottom: 15px;">Puedes sumar montos con "+". Ejemplo: 2800 + 500</p>
             
             <div class="projection-controls">
                 <div class="input-group">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
-                    <input type="text" id="fixed-income" placeholder="Ingresos Fijos (Ej. 2800 + 500)">
+                    <input type="text" id="fixed-income" placeholder="Ingresos Fijos">
                 </div>
                 <div class="input-group">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
-                    <input type="text" id="fixed-expenses" placeholder="Gastos Fijos (Ej. 1314 + 150)">
+                    <input type="text" id="fixed-expenses" placeholder="Gastos Fijos">
                 </div>
                 <button id="btn-calculate" class="btn-secondary">🔮 Simular Futuro</button>
             </div>
 
             <div id="projection-results" class="projection-table-container" style="display: none;">
-                <div class="table-responsive">
-                    <table class="projection-table">
-                        <thead>
-                            <tr>
-                                <th>Tiempo</th>
-                                <th>Ahorro Acumulado (Aprox.)</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="projection-body"></tbody>
-                    </table>
-                </div>
+                <table class="projection-table">
+                    <thead>
+                        <tr>
+                            <th>Tiempo</th>
+                            <th>Ahorro Acumulado (Aprox.)</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projection-body"></tbody>
+                </table>
             </div>
         </div>
 
         <div class="history-section slide-up delay-5" style="margin-top: 25px;">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial Detallado del Mes</h3>
-            <div class="history-list" id="transaction-list"></div>
+            <div class="history-list" id="transaction-list">
+                </div>
         </div>
 
     </div>
