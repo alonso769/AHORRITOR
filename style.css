@@ -5,7 +5,7 @@
     --glass-bg: rgba(255, 255, 255, 0.05);
     --gold-accent: #feca57; --pink-accent: #ff9ff3; --blue-accent: #0fbcf9; 
     --green-accent: #2ed573; --red-accent: #ff4757; --text-light: #ffffff;
-    --purple-magic: #a55eea; /* Color para la magia de proyección */
+    --purple-magic: #a55eea; 
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -20,7 +20,7 @@ body { background: radial-gradient(circle at top left, #2c3e50, #000000); color:
 .coin-food { position: absolute; font-size: 35px; color: var(--gold-accent); filter: drop-shadow(0 0 10px var(--gold-accent)); opacity: 0; top: -80px; }
 .c1 { animation: feedThePig 2s infinite 0s; } .c2 { animation: feedThePig 2s infinite 0.66s; } .c3 { animation: feedThePig 2s infinite 1.33s; }
 @keyframes feedThePig { 0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); } 20% { opacity: 1; } 70% { opacity: 1; transform: translateY(80px) rotate(180deg) scale(1); } 85% { opacity: 0; transform: translateY(110px) rotate(360deg) scale(0.2); } 100% { opacity: 0; } }
-.loading-text { color: var(--gold-accent); letter-spacing: 2px; font-weight: 600; animation: textPulse 1.5s infinite; text-transform: uppercase; margin-top: 20px; }
+.loading-text { color: var(--gold-accent); letter-spacing: 2px; font-weight: 600; animation: textPulse 1.5s infinite; text-transform: uppercase; margin-top: 20px; text-align: center; padding: 0 10px;}
 @keyframes textPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 15px var(--gold-accent); } }
 
 /* UI Base */
@@ -34,16 +34,17 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .date-text { color: #a4b0be; font-size: 13px; text-transform: capitalize; margin-top: 2px;}
 .header-actions { display: flex; gap: 15px; align-items: center; }
 
-.month-picker-container { position: relative; }
+.month-picker-container { position: relative; width: 100%; max-width: 200px; }
 .month-picker-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gold-accent); pointer-events: none;}
-.month-selector { padding: 10px 15px 10px 35px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold-accent); color: white; border-radius: 12px; font-family: 'Poppins'; cursor: pointer; outline: none; transition: 0.3s; }
+.month-selector { width: 100%; padding: 10px 15px 10px 35px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold-accent); color: white; border-radius: 12px; font-family: 'Poppins'; cursor: pointer; outline: none; transition: 0.3s; }
 .month-selector:hover, .month-selector:focus { background: rgba(0,0,0,0.6); box-shadow: 0 0 10px rgba(254, 202, 87, 0.3); }
 
 /* Inputs y Botones */
 .input-group { position: relative; margin-bottom: 15px; }
 .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold-accent); z-index: 1;}
 .input-icon-fix { left: 15px !important; } 
-input, select { width: 100%; padding: 15px 15px 15px 45px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; outline: none; transition: 0.3s; font-size: 14px; }
+/* Aumenté el font-size a 16px para inputs: Esto evita que los iPhone hagan zoom al escribir */
+input, select { width: 100%; padding: 15px 15px 15px 45px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; outline: none; transition: 0.3s; font-size: 16px; }
 input:focus, select:focus { border-color: var(--gold-accent); box-shadow: 0 0 15px rgba(254, 202, 87, 0.3); transform: scale(1.02); }
 select { padding-left: 15px; cursor: pointer; appearance: none; } select option { background: #2c3e50; }
 
@@ -69,9 +70,13 @@ button { width: 100%; padding: 15px; border: none; border-radius: 12px; font-wei
 .kpi-card h1 { margin-top: 10px; font-size: 24px; font-weight: 800; }
 
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; margin-bottom: 25px;}
+.forms-column { display: flex; flex-direction: column; gap: 25px; }
+.quick-out-section { background: rgba(255, 71, 87, 0.1); padding: 25px; border-radius: 20px; border: 1px dashed var(--red-accent); box-shadow: 0 0 15px rgba(255, 71, 87, 0.1); }
+.quick-out-section h3 { color: var(--red-accent); font-size: 18px; margin-bottom: 5px; }
+
 .form-section, .chart-section { background: rgba(0,0,0,0.3); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
 .form-section h3, .chart-section h3 { margin-bottom: 20px; color: var(--gold-accent); font-size: 18px; }
-.canvas-container { height: 300px; position: relative; }
+.canvas-container { height: 300px; position: relative; width: 100%;}
 
 /* PROYECCIÓN */
 .projection-section { background: rgba(0,0,0,0.3); padding: 25px; border-radius: 20px; border: 1px solid rgba(165, 94, 234, 0.3); }
@@ -79,8 +84,8 @@ button { width: 100%; padding: 15px; border: none; border-radius: 12px; font-wei
 .projection-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end;}
 .projection-controls button { margin-bottom: 15px; border-color: var(--purple-magic); color: var(--purple-magic); }
 .projection-controls button:hover { background: rgba(165, 94, 234, 0.15); box-shadow: 0 0 15px rgba(165, 94, 234, 0.3); }
-
-.projection-table { width: 100%; border-collapse: collapse; margin-top: 15px; color: #fff; }
+.table-responsive { width: 100%; overflow-x: auto; }
+.projection-table { width: 100%; border-collapse: collapse; margin-top: 15px; color: #fff; min-width: 300px; }
 .projection-table th { text-align: left; padding: 10px; border-bottom: 2px solid var(--purple-magic); color: var(--purple-magic); font-size: 14px; }
 .projection-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
 .projection-highlight { color: var(--green-accent); font-weight: bold; }
@@ -101,17 +106,36 @@ button { width: 100%; padding: 15px; border: none; border-radius: 12px; font-wei
 .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; } .delay-5 { animation-delay: 0.5s; }
 .error-msg { color: var(--red-accent); text-align: center; margin-top: 15px; font-size: 14px; }
 
-@media (max-width: 900px) { .dashboard-grid, .projection-controls { grid-template-columns: 1fr; } .canvas-container { height: 250px; } }
 
 /* =========================================
-   ESTILOS PARA MODO SALIDA RÁPIDA
+   DISEÑO RESPONSIVO (MÓVILES Y TABLETS)
    ========================================= */
-.forms-column { display: flex; flex-direction: column; gap: 25px; }
-.quick-out-section { 
-    background: rgba(255, 71, 87, 0.1); /* Fondo rojizo sutil */
-    padding: 25px; 
-    border-radius: 20px; 
-    border: 1px dashed var(--red-accent); 
-    box-shadow: 0 0 15px rgba(255, 71, 87, 0.1);
+@media (max-width: 900px) { 
+    .dashboard-grid { grid-template-columns: 1fr; } 
+    .projection-controls { grid-template-columns: 1fr; } 
+    .canvas-container { height: 280px; }
 }
-.quick-out-section h3 { color: var(--red-accent); font-size: 18px; margin-bottom: 5px; }
+
+@media (max-width: 600px) { 
+    /* Contenedores principales */
+    body { padding: 10px; }
+    .glass-container { padding: 20px 15px; border-radius: 15px; }
+    
+    /* Encabezados centrados */
+    header { flex-direction: column; text-align: center; justify-content: center; gap: 20px;}
+    .header-title { flex-direction: column; gap: 5px;}
+    .header-actions { width: 100%; flex-direction: column; }
+    .month-picker-container { max-width: 100%; }
+    
+    /* Botones y formularios */
+    .btn-danger { width: 100%; } /* Botón salir ocupa todo el ancho */
+    .form-section, .chart-section, .projection-section, .history-section, .quick-out-section { padding: 15px; }
+    
+    /* El chanchito en pantallas muy pequeñas */
+    .piggy-feeder { transform: scale(0.8); margin-bottom: 10px; }
+    .loading-text { font-size: 16px; }
+
+    /* Ajuste de lista histórica para que los montos no se corten */
+    .history-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .history-amount { align-self: flex-end; font-size: 18px; }
+}

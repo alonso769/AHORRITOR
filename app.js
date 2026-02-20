@@ -34,7 +34,6 @@ const dateDisplay = document.getElementById('current-date-display');
 const typeSelect = document.getElementById('type');
 const categorySelect = document.getElementById('category');
 
-// Elementos de Simulación y Salida Rápida
 const btnSimulate = document.getElementById('btn-calculate');
 const inputFixIncome = document.getElementById('fixed-income');
 const inputFixExpense = document.getElementById('fixed-expenses');
@@ -44,13 +43,10 @@ const tableContainer = document.getElementById('projection-results');
 const btnOut = document.getElementById('btn-out');
 const outAmountInput = document.getElementById('out-amount');
 
-// ==========================================
-// CATEGORÍAS DINÁMICAS (Actualizadas)
-// ==========================================
 const categoryOptions = {
     expense: [
         { value: "Comida", text: "🍔 Comida" },
-        { value: "Salidas_Ocio", text: "🍻 Salidas / Ocio" }, // NUEVO
+        { value: "Salidas_Ocio", text: "🍻 Salidas / Ocio" }, 
         { value: "Salud", text: "💊 Salud" },
         { value: "Educacion", text: "📚 Educación" },
         { value: "Transporte", text: "🚌 Transporte" },
@@ -94,7 +90,6 @@ function evaluarSumaMatematica(textoCaja) {
     return sumaTotal;
 }
 
-// Lógica de Simulación
 btnSimulate.addEventListener('click', () => {
     const ingFijo = evaluarSumaMatematica(inputFixIncome.value);
     const gasFijo = evaluarSumaMatematica(inputFixExpense.value);
@@ -172,9 +167,6 @@ document.getElementById('btn-register')?.addEventListener('click', async () => {
 
 document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth));
 
-// ==========================================
-// FUNCIÓN MODO SALIDA RÁPIDA
-// ==========================================
 btnOut?.addEventListener('click', async () => {
     const amount = parseFloat(outAmountInput.value);
     if (!amount || amount <= 0) return alert("¡Ingresa cuánto gastaste en tu salida!");
@@ -188,7 +180,7 @@ btnOut?.addEventListener('click', async () => {
             uid: currentUser.uid, 
             type: 'expense', 
             amount: amount, 
-            category: "Salidas_Ocio", // Asigna automáticamente la categoría de Salidas
+            category: "Salidas_Ocio",
             date: serverTimestamp()
         });
         
@@ -204,7 +196,6 @@ btnOut?.addEventListener('click', async () => {
 });
 
 
-// FUNCIÓN DE GUARDADO NORMAL
 btnAdd?.addEventListener('click', async () => {
     const type = document.getElementById('type').value;
     const amountInput = document.getElementById('amount');
@@ -253,7 +244,6 @@ function procesarYRenderizarDashboard() {
     let saldoTotal = 0; let ahorrosTotales = 0; 
     let ingresosMes = 0; let gastosMes = 0; let ahorrosDelMes = 0;
     
-    // Añadida la categoría Salidas_Ocio
     let chartDataMap = { "Comida": 0, "Salidas_Ocio": 0, "Salud": 0, "Educacion": 0, "Transporte": 0, "Servicios": 0, "Otros": 0 };
     
     const historyList = document.getElementById('transaction-list');
@@ -299,7 +289,6 @@ function procesarYRenderizarDashboard() {
                 if(data.type === 'income') { icon = 'fa-arrow-trend-up'; prefix = '+'; }
                 if(data.type === 'saving') { icon = 'fa-piggy-bank'; prefix = ''; }
                 
-                // Limpiar el texto para que se vea bonito en el historial
                 let categoryName = (data.category || "").replace("_", " ").replace("Ocio", "/ Ocio");
                 
                 const day = String(txDateObj.getDate()).padStart(2, '0');
@@ -353,13 +342,20 @@ function animarContador(elementId, targetValue) {
     }
 }
 
+// ==========================================
+// GRÁFICA INTELIGENTE PARA MÓVILES
+// ==========================================
 function actualizarGrafica(dataMap) {
     const ctx = document.getElementById('expensesChart')?.getContext('2d');
     if(!ctx) return;
     if (expensesChart) expensesChart.destroy();
-    Chart.defaults.color = '#ffffff'; Chart.defaults.font.family = "'Poppins', sans-serif";
     
-    // Le agregué un color más a la paleta para la nueva categoría
+    // Detectar si la pantalla es de un celular (menos de 768px)
+    const isMobile = window.innerWidth < 768;
+
+    Chart.defaults.color = '#ffffff'; 
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    
     expensesChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -371,8 +367,16 @@ function actualizarGrafica(dataMap) {
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, cutout: '75%',
-            plugins: { legend: { position: 'right', labels: { padding: 15, boxWidth: 12, usePointStyle: true, font: {size: 11} } } }
+            responsive: true, 
+            maintainAspectRatio: false, 
+            cutout: '70%',
+            plugins: { 
+                legend: { 
+                    // Si es celular la leyenda va abajo, si es PC va a la derecha
+                    position: isMobile ? 'bottom' : 'right', 
+                    labels: { padding: 10, boxWidth: 12, usePointStyle: true, font: {size: 11} } 
+                } 
+            }
         }
     });
 }
