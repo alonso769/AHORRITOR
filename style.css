@@ -15,7 +15,7 @@
 * { 
     margin: 0; padding: 0; box-sizing: border-box; 
     font-family: 'Poppins', sans-serif; 
-    -webkit-tap-highlight-color: transparent; /* Mejora la respuesta táctil en móviles */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body { 
@@ -23,7 +23,7 @@ body {
     color: var(--text-light); 
     min-height: 100vh; 
     display: flex; justify-content: center; align-items: center; 
-    padding: 15px; /* Reducido para móviles */
+    padding: 15px;
     overflow-x: hidden; 
 }
 
@@ -43,11 +43,11 @@ body {
 /* UI Base */
 .glass-container { 
     width: 100%; 
-    max-width: 1100px; /* Un poco más amplio para el dashboard */
+    max-width: 1100px;
     background: rgba(255, 255, 255, 0.03); 
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
     border: 1px solid rgba(255, 255, 255, 0.1); 
-    padding: 25px; /* Ajustado */
+    padding: 25px;
     border-radius: 25px; 
     box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
 }
@@ -80,7 +80,7 @@ input, select {
     width: 100%; padding: 12px 15px 12px 45px; 
     background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); 
     color: white; border-radius: 12px; outline: none; transition: 0.3s; 
-    font-size: 16px; /* Evita zoom automático en iPhone */
+    font-size: 16px; 
 }
 input:focus, select:focus { border-color: var(--gold-accent); box-shadow: 0 0 15px rgba(254, 202, 87, 0.2); transform: scale(1.01); }
 select { padding-left: 15px; cursor: pointer; appearance: none; } select option { background: #2c3e50; }
@@ -112,7 +112,7 @@ button {
 .expense-card { border-bottom: 4px solid var(--red-accent); } .expense-card h1, .expense-card i { color: var(--red-accent); }
 .budget-card { border-bottom: 4px solid var(--gold-accent); } .budget-card h1, .budget-card i { color: var(--gold-accent); }
 .kpi-card p { font-size: 11px; color: #a4b0be; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-.kpi-card h1 { margin-top: 8px; font-size: 22px; font-weight: 800; word-break: break-all;}
+.kpi-card h1 { margin-top: 8px; font-size: 22px; font-weight: 800; word-break: break-word;} /* Cambiado break-all a break-word */
 
 /* Dashboard Grid */
 .dashboard-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 20px;}
@@ -175,21 +175,59 @@ button {
 }
 
 @media (max-width: 600px) { 
-    body { padding: 10px; align-items: flex-start; } /* Alineado arriba para facilitar scroll */
-    .glass-container { padding: 15px; border-radius: 20px; margin-top: 5px; }
+    body { 
+        padding: 10px; 
+        align-items: flex-start; /* CRÍTICO: Evita que la app se corte por arriba al hacer scroll */
+    } 
+    .glass-container { 
+        padding: 15px; /* Reducimos padding interno */
+        border-radius: 15px; 
+        margin-top: 10px;
+    }
     
-    header { flex-direction: column; text-align: center; gap: 15px; }
+    header { flex-direction: column; text-align: center; gap: 10px; padding-bottom: 15px; }
     .header-actions { width: 100%; justify-content: center; flex-direction: column; }
     .btn-danger { width: 100%; }
     
-    .kpi-container { grid-template-columns: 1fr 1fr; } /* 2 columnas en móvil */
-    /* La tarjeta de Disponible Total ocupa toda la fila en móvil para que resalte */
-    .balance-card { grid-column: span 2; }
-    .kpi-card h1 { font-size: 1.1rem; }
+    /* Layout de KPIs para Móvil */
+    .kpi-container { grid-template-columns: 1fr 1fr; gap: 10px; } 
+    .balance-card { grid-column: span 2; padding: 20px 15px; }
+    
+    .kpi-card { padding: 12px; }
+    .kpi-card h1 { 
+        font-size: 1.1rem; 
+        margin-top: 5px; 
+        word-break: normal; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; /* Si el número es gigante, muestra "..." al final en lugar de romper el diseño */
+    }
+    .kpi-card p { font-size: 10px; }
+    .kpi-icon { font-size: 22px; top: 10px; right: 10px; }
 
-    .history-item { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .history-amount { align-self: flex-end; }
+    /* Secciones más compactas */
+    .quick-out-section, .form-section, .chart-section, .projection-section, .history-section {
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .canvas-container { height: 220px; } /* Gráfica ligeramente más pequeña para ahorrar scroll */
+
+    /* Inputs más amigables al tacto pero sin ocupar media pantalla */
+    input, select, button { font-size: 14px; }
+    input, select { padding: 10px 12px 10px 40px; }
+    .input-group i { left: 15px; }
+    
+    .history-item { flex-direction: row; justify-content: space-between; padding: 12px 10px; gap: 8px;}
+    .history-amount { align-self: center; font-size: 14px; }
+    .history-info strong { font-size: 13px; }
     
     .the-piggy { font-size: 60px; }
     .piggy-feeder { height: 120px; }
+}
+
+/* Ajuste extremo para teléfonos muy pequeños (ej. iPhone SE, Galaxy Fold cerrado) */
+@media (max-width: 360px) {
+    .kpi-container { grid-template-columns: 1fr; }
+    .balance-card { grid-column: span 1; }
 }

@@ -42,15 +42,15 @@ const tableContainer = document.getElementById('projection-results');
 
 const btnOut = document.getElementById('btn-out');
 const outAmountInput = document.getElementById('out-amount');
-const outCategoryInput = document.getElementById('out-category'); // REFERENCIA AL NUEVO SELECT
+const outCategoryInput = document.getElementById('out-category');
 
 const categoryOptions = {
     expense: [
         { value: "Comida", text: "🍔 Comida" },
         { value: "Salidas_Ocio", text: "🍻 Salidas / Ocio" }, 
         { value: "Transporte", text: "🚌 Transporte" },
-        { value: "Pareja", text: "❤️ Pareja (Tami)" }, // AGREGADO
-        { value: "Familia", text: "👨‍👩‍👧 Familia (Alessita)" }, // AGREGADO
+        { value: "Pareja", text: "❤️ Pareja (Tami)" }, 
+        { value: "Familia", text: "👨‍👩‍👧 Familia (Alessita)" }, 
         { value: "Salud", text: "💊 Salud" },
         { value: "Educacion", text: "📚 Educación" },
         { value: "Servicios", text: "💡 Servicios" },
@@ -163,10 +163,9 @@ document.getElementById('btn-register')?.addEventListener('click', async () => {
 
 document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth));
 
-// BOTÓN DE SALIDA RÁPIDA ACTUALIZADO
 btnOut?.addEventListener('click', async () => {
     const amount = parseFloat(outAmountInput.value);
-    const category = outCategoryInput.value; // NUEVO: Toma la categoría del select rojo
+    const category = outCategoryInput.value; 
     if (!amount || amount <= 0) return alert("¡Ingresa cuánto gastaste en tu salida!");
 
     const originalText = btnOut.innerHTML;
@@ -178,7 +177,7 @@ btnOut?.addEventListener('click', async () => {
             uid: currentUser.uid, 
             type: 'expense', 
             amount: amount, 
-            category: category, // AHORA GUARDA LA CATEGORÍA QUE ELIJAS
+            category: category, 
             date: serverTimestamp()
         });
         
@@ -232,7 +231,6 @@ function procesarYRenderizarDashboard() {
     let saldoTotal = 0; let ahorrosTotales = 0; 
     let ingresosMes = 0; let gastosMes = 0; let ahorrosDelMes = 0;
     
-    // OBJETO DE GRÁFICA ACTUALIZADO CON TUS CATEGORÍAS
     let chartDataMap = { "Comida": 0, "Transporte": 0, "Pareja": 0, "Familia": 0, "Salidas_Ocio": 0, "Salud": 0, "Educacion": 0, "Servicios": 0, "Otros": 0 };
     
     const historyList = document.getElementById('transaction-list');
